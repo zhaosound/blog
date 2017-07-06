@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title  %}
+    login
+{% endblock %}
+
+{% block body %}
+    {{ form_start(form) }}
+    {{ form_rest(form) }}
+    <button type="submit">保存</button>
+    {{ form_end(form) }}
+{% endblock %}

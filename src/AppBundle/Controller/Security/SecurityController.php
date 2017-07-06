@@ -3,13 +3,19 @@
 namespace AppBundle\Controller\Security;
 
 
+use AppBundle\Entity\User;
+use AppBundle\Form\UserType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\EncoderFactory;
+use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class SecurityController extends Controller
 {
     /**
-     * @Route("/login", name="support_login")
+     * @Route("/login", name="login")
      */
     public function loginAction()
     {
@@ -22,7 +28,7 @@ class SecurityController extends Controller
     }
 
     /**
-     * @Route("/login_check", name="support_login_check")
+     * @Route("/login_check", name="login_check")
      */
     public function loginCheckAction()
     {
@@ -30,10 +36,33 @@ class SecurityController extends Controller
     }
 
     /**
-     * @Route("/logout", name="support_logout")
+     * @Route("/logout", name="logout")
      */
     public function loginOutAction()
     {
         throw new \Exception("this should never be reached!");
+    }
+
+    /**
+     * @Route("/register", name="register")
+     */
+    public function registerAction(Request $request, EncoderFactoryInterface $encoderFactory)
+    {
+        $user = new User();
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isValid() && $form->isSubmitted()) {
+            $password = $encoderFactory->getEncoder($user)->encodePassword($user->getPassword(), $user->getSalt());
+            $user->setPassword($password);
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+        }
+
+        return $this->render('Security/register.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 }

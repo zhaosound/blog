@@ -60,6 +60,14 @@ doctrine:
         naming_strategy: doctrine.orm.naming_strategy.underscore
         auto_mapping: true
 
+# stof Configuration
+stof_doctrine_extensions:
+    orm:
+        default:
+            softdeleteable: true
+            timestampable: true
+            blameable: true
+
 # Swiftmailer Configuration
 swiftmailer:
     transport: '%mailer_transport%'
