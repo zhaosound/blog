@@ -46,14 +46,14 @@ class SecurityController extends Controller
     /**
      * @Route("/register", name="register")
      */
-    public function registerAction(Request $request, EncoderFactoryInterface $encoderFactory)
+    public function registerAction(Request $request, UserPasswordEncoderInterface $passwordEncoder)
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isValid() && $form->isSubmitted()) {
-            $password = $encoderFactory->getEncoder($user)->encodePassword($user->getPassword(), $user->getSalt());
+            $password = $passwordEncoder->encodePassword($user, $user->getPassword());
             $user->setPassword($password);
 
             $em = $this->getDoctrine()->getManager();
